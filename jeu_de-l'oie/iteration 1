@@ -1,0 +1,27 @@
+int D1 = 0;
+int D2 = 0;
+int position = 0;
+
+void setup() {
+
+  while (position != 63) {
+
+    D1 = LancerDes();
+    D2 = LancerDes();
+    println("position: " + position + " " + D1 + "+" +  D2);
+
+    position = position + D1 + D2;
+
+    if (position > 63) {
+      int ecart = position - 63;
+      position = position - ecart * 2;
+    }
+  }
+
+  println("Position: " + position + " C'est gagné !");
+}
+
+int LancerDes() {
+
+  return int(random(6)+1);
+}
