@@ -2,30 +2,47 @@ int D1 = 0;
 int D2 = 0;
 int position = 0;
 int[] plateau = new int [64];
-int taillecase= 10;
+int taillecase= 20;
 int plateau_y=taillecase/2;
+boolean play=false;
 
 void draw() {
-    
-}
-void supp_player(int position){
-      fill (143, 139, 163);
-      rect (plateau[position], plateau_y, taillecase, taillecase);
-      fill(0);
-      text(position, plateau[position], plateau_y);
-      
-} 
+  if (play) {
 
-void display_player(int position){
-      fill (255, 0, 0);
-      rect (plateau[position], plateau_y, taillecase, taillecase);
-      fill(0);
-      text(position, plateau[position], plateau_y);
-      
+    D1 = LancerDes();
+    D2 = LancerDes();
+    println("position: " + position + " " + D1 + "+" +  D2);
+    supp_player(position);
+    position = position + D1 + D2;
+    if (position > 63) {
+      int ecart = position - 63;
+      position = position - ecart * 2;
+    }
+    display_player(position);
+    play=false;
+  }
+  if (position==63) {
+    endgame();
+  }
+}
+
+
+
+void supp_player(int position) {
+  fill (143, 139, 163);
+  rect (plateau[position], plateau_y, taillecase, taillecase);
+  fill(0);
+  text(position, plateau[position], plateau_y);
+}
+
+void display_player(int position) {
+  fill (255, 0, 0);
+  rect (plateau[position], plateau_y, taillecase, taillecase);
+  fill(0);
+  text(position, plateau[position], plateau_y);
 }
 void display_plateau() {
   for (int i = 0; i < 64; i++) {
-
     fill (143, 139, 163);
     rect (plateau[i], plateau_y, taillecase, taillecase);
     textAlign(CENTER, CENTER);
@@ -34,26 +51,10 @@ void display_plateau() {
   }
 }
 void setup() {
-  size (1000, 500);
+  size (1500, 500);
   rectMode(CENTER);
   init_plateau();
   display_plateau();
-  while (position != 63) {
-
-    D1 = LancerDes();
-    D2 = LancerDes();
-    delay(1000);
-    println("position: " + position + " " + D1 + "+" +  D2);
-    supp_player(position);
-    position = position + D1 + D2;
-    if (position > 63) {
-      int ecart = position - 63;
-      position = position - ecart * 2;      
-    }
-     display_player(position);
-  }
-
-  println("Position: " + position + " C'est gagné !");
 }
 
 void init_plateau() {
@@ -66,4 +67,14 @@ void init_plateau() {
 int LancerDes() {
 
   return int(random(6)+1);
+}
+
+void endgame() {
+  println("c'est gagné");
+  noLoop();
+}
+
+void mouseClicked() {
+  play = true;
+  println("joue un coup");
 }
