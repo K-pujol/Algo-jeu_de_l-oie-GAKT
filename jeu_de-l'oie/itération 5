@@ -1,0 +1,98 @@
+int D1 = 2;
+int D2 = 1;
+int position=16;
+int[] plateau = new int [64];
+int taillecase= 20;
+int plateau_y=taillecase/2;
+boolean play=false;
+int attente=0;
+
+void draw() {
+  if (play) {
+    if (attente==0) {
+     // D1 = LancerDes();
+      //D2 = LancerDes();
+      println("position: " + position + " " + D1 + "+" +  D2);
+
+      mouvement_player( D1, D2);
+      if (position==19){
+      attente=2;
+      }
+      if (position == 9 || position == 18 || position == 27 || position == 36 || position == 45 ||position == 54)
+      {
+        mouvement_player( D1, D2);
+      }
+ 
+    }
+    else {
+    attente--;
+    println(attente);
+    
+    }
+   play=false;
+  }
+  if (position==63) {
+    endgame();
+  }
+}
+void mouvement_player( int D1, int D2) {
+  supp_player(position);
+  position = position + D1 + D2;
+  if (position > 63) {
+    int ecart = position - 63;
+    position = position - ecart * 2;
+  }
+  display_player(position);
+}
+
+
+void supp_player(int position) {
+  fill (143, 139, 163);
+  rect (plateau[position], plateau_y, taillecase, taillecase);
+  fill(0);
+  text(position, plateau[position], plateau_y);
+}
+
+void display_player(int position) {
+  fill (255, 0, 0);
+  rect (plateau[position], plateau_y, taillecase, taillecase);
+  fill(0);
+  text(position, plateau[position], plateau_y);
+}
+void display_plateau() {
+  for (int i = 0; i < 64; i++) {
+    fill (143, 139, 163);
+    rect (plateau[i], plateau_y, taillecase, taillecase);
+    textAlign(CENTER, CENTER);
+    fill(0);
+    text(i, plateau[i], plateau_y);
+  }
+}
+void setup() {
+  size (1500, 500);
+  rectMode(CENTER);
+  init_plateau();
+  display_plateau();
+}
+
+void init_plateau() {
+  for (int i=0; plateau.length>i; i++) {
+    plateau[i]=i*taillecase+taillecase/2;
+  }
+}
+
+
+int LancerDes() {
+
+  return int(random(6)+1);
+}
+
+void endgame() {
+  println("c'est gagné");
+  noLoop();
+}
+
+void mouseClicked() {
+  play = true;
+  println("joue un coup");
+}
