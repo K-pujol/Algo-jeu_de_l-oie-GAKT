@@ -1,6 +1,6 @@
 int D1 = 0;
 int D2 = 0;
-int joueur=0;
+int joueur_actif=0;
 int nb_players=5;
 int players_colors= int(360/(nb_players+1));
 int[][] plateau = new int [64][2];
@@ -25,43 +25,76 @@ void settings() {
 }
 void draw() {
   if (play) {
-    if (players[joueur][ATTENTE]==0) {
+    if (players[joueur_actif][ATTENTE]==0) {
       D1 = LancerDes();
       D2 = LancerDes();
-      println(D1, "+", D2);
-      mouvement_player( joueur, D1, D2);
-      if (players[joueur][POSITION]==HOTEL) {
-        players[joueur][ATTENTE]=2;
+      println(joueur_actif," ",players[joueur_actif][POSITION]," ",D1, "+", D2);
+   
+      mouvement_player(  D1, D2);
+      if (players[joueur_actif][POSITION]==HOTEL) {
+        players[joueur_actif][ATTENTE]=2;
       }
-      if (players[joueur][POSITION] == OIES)
+      if (players[joueur_actif][POSITION] == OIES)
       {
-        mouvement_player( joueur, D1, D2);
+        mouvement_player(D1, D2);
       }
-      if (players[joueur][POSITION]==LABYRINTHE) {
-        players[joueur][POSITION]=30;
+      if (players[joueur_actif][POSITION]==LABYRINTHE) {
+        players[joueur_actif][POSITION]=30;
       }
-      if (players[joueur][POSITION]==TETEDEMORT) {
-        players[joueur][POSITION]=0;
+      if (players[joueur_actif][POSITION]==TETEDEMORT) {
+        players[joueur_actif][POSITION]=0;
       }
-    } else {
-      players[joueur][ATTENTE]--;
+      if (players[joueur_actif][POSITION]==PUITS) {
+        players[joueur_actif][ATTENTE]=-1;
+      }
+      if (players[joueur_actif][POSITION]==PRISON) {
+        players[joueur_actif][ATTENTE]=-1;
+      }
     }
-    play=false;
+    else {
+    players[joueur_actif][ATTENTE]--;
+    println("attente");
+  }
+  } 
+  play=false;
 
-    if (players[joueur][POSITION]==ARRIVER) {
-      endgame();
-    }
+  if (players[joueur_actif][POSITION]==ARRIVER) {
+    endgame();
   }
 }
 
-void mouvement_player( int joueur, int D1, int D2) {
-  display_case(players[joueur][POSITION]);
-  players[joueur][POSITION] = players[joueur][POSITION] + D1 + D2;
-  if (players[joueur][POSITION] > 63) {
-    int ecart = players[joueur][POSITION] - 63;
-    players[joueur][POSITION] = players[joueur][POSITION] - ecart * 2;
+int check_case(int case_id) {
+  int case_occuped= -1;
+  for (int i=0; i<nb_players; i++) {
+    if (i != joueur_actif) {
+      if (players[i][POSITION]==case_id) {
+        case_occuped=i;
+      }
+    }
   }
-  display_player(players[joueur][POSITION], joueur);
+  return case_occuped;
+}
+
+
+
+void mouvement_player( int D1, int D2) {
+  int future_case= 0;
+  int player_found =0;²
+  future_case = players[joueur_actif][POSITION] + D1 + D2;
+  if (future_case > 63) {
+    int ecart = players[joueur_actif][POSITION] - 63;
+    future_case = players[joueur_actif][POSITION] - ecart * 2;
+  }
+  player_found = check_case(future_case);
+  if (player_found >= 0)
+  {
+    players[player_found][POSITION]=players[joueur_actif][POSITION];
+    players[player_found][ATTENTE]=0;
+    display_player(players[player_found][POSITION], player_found);
+  }
+  display_case(players[joueur_actif][POSITION]);
+  players[joueur_actif][POSITION]=future_case;
+  display_player(players[joueur_actif][POSITION], joueur_actif);
 }
 
 
@@ -81,6 +114,12 @@ void display_player(int celulle, int joueur) {
 void display_case(int i) {
   fill (#EDEDE8);
   switch(i) {
+  case PUITS:
+    fill(#61ADFC);
+    break;
+  case PRISON:
+    fill(#F07816);
+    break;
   case HOTEL:
     fill(#E71CE8);
     break;
@@ -178,9 +217,9 @@ void endgame() {
 
 void mouseClicked() {
   play = true;
-  joueur++;
-  if (joueur==nb_players) {
-    joueur=0;
+  joueur_actif++;
+  if (joueur_actif==nb_players) {
+    joueur_actif=0;
   }
   println("joue un coup");
 }
