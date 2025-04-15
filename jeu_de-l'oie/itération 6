@@ -19,17 +19,33 @@ final int ARRIVER=63;
 final int PUITS=3;
 final int POSITION=0;
 final int ATTENTE=1;
+final color BG = color (240,224,211);
 
 void settings() {
   size (taillecase*64, taillecase*10);
+ 
 }
 void draw() {
+
+
+  for ( int i=0; i < nb_players; i++)
+  {
+    display_player(players[i][POSITION], i);
+  }
+
+  if (players[joueur_actif][POSITION]==ARRIVER)
+  {
+    endgame();
+  }
+
   if (play) {
+
+
     if (players[joueur_actif][ATTENTE]==0) {
       D1 = LancerDes();
       D2 = LancerDes();
-      println(joueur_actif," ",players[joueur_actif][POSITION]," ",D1, "+", D2);
-   
+      println(joueur_actif, " ", players[joueur_actif][POSITION], " ", D1, "+", D2);
+
       mouvement_player(  D1, D2);
       if (players[joueur_actif][POSITION]==HOTEL) {
         players[joueur_actif][ATTENTE]=2;
@@ -50,16 +66,11 @@ void draw() {
       if (players[joueur_actif][POSITION]==PRISON) {
         players[joueur_actif][ATTENTE]=-1;
       }
+    } else {
+      players[joueur_actif][ATTENTE]--;
+      println("attente");
     }
-    else {
-    players[joueur_actif][ATTENTE]--;
-    println("attente");
-  }
-  } 
-  play=false;
-
-  if (players[joueur_actif][POSITION]==ARRIVER) {
-    endgame();
+    play=false;
   }
 }
 
@@ -79,22 +90,22 @@ int check_case(int case_id) {
 
 void mouvement_player( int D1, int D2) {
   int future_case= 0;
-  int player_found =0;²
+  int player_found =0;
+  display_case(players[joueur_actif][POSITION]);
   future_case = players[joueur_actif][POSITION] + D1 + D2;
   if (future_case > 63) {
-    int ecart = players[joueur_actif][POSITION] - 63;
-    future_case = players[joueur_actif][POSITION] - ecart * 2;
+    int ecart = future_case - 63;
+    future_case = future_case - ecart * 2;
   }
   player_found = check_case(future_case);
   if (player_found >= 0)
   {
     players[player_found][POSITION]=players[joueur_actif][POSITION];
     players[player_found][ATTENTE]=0;
-    display_player(players[player_found][POSITION], player_found);
+    // display_player(players[player_found][POSITION], player_found);
   }
-  display_case(players[joueur_actif][POSITION]);
   players[joueur_actif][POSITION]=future_case;
-  display_player(players[joueur_actif][POSITION], joueur_actif);
+  // display_player(players[joueur_actif][POSITION], joueur_actif);
 }
 
 
@@ -105,9 +116,15 @@ void mouvement_player( int D1, int D2) {
 //  text(celulle, plateau[celulle][0], plateau_y);
 //}
 
-void display_player(int celulle, int joueur) {
+void display_player(int celulle, int joueur) 
+{
+  fill(BG);
+  //noStroke();
+  rect(32 * taillecase,plateau_y* (joueur + 2) * 1.3 ,taillecase * 64, (taillecase * 1.1f)/2);
+  stroke(0);
+   //fill (players_colors*(joueur+1), 99, 99);
   fill (players_colors*(joueur+1), 99, 99);
-  ellipse (plateau[celulle][0], plateau_y, taillecase/2, taillecase/2);
+  ellipse (plateau[celulle][0], plateau_y* (joueur + 2) * 1.3 , taillecase/2, taillecase/2);
   fill(0);
   text(celulle, plateau[celulle][0], plateau_y);
 }
@@ -157,6 +174,7 @@ void display_plateau() {
 void setup() {
   colorMode(HSB, 360, 100, 100);
   rectMode(CENTER);
+  background(BG); 
   init_plateau();
   display_plateau();
 }
