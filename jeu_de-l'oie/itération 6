@@ -1,7 +1,8 @@
 int D1 = 0;
 int D2 = 0;
 int joueur=0;
-int nb_players=2;
+int nb_players=5;
+int players_colors= int(360/(nb_players+1));
 int[][] plateau = new int [64][2];
 int[][] players = new int [nb_players][2];
 int taillecase= 40;
@@ -21,106 +22,101 @@ final int ATTENTE=1;
 
 void settings() {
   size (taillecase*64, taillecase*10);
-  
 }
 void draw() {
   if (play) {
-      if (players[joueur][ATTENTE]==0) {
-        D1 = LancerDes();
-        D2 = LancerDes();
-        println(D1,"+",D2);
+    if (players[joueur][ATTENTE]==0) {
+      D1 = LancerDes();
+      D2 = LancerDes();
+      println(D1, "+", D2);
+      mouvement_player( joueur, D1, D2);
+      if (players[joueur][POSITION]==HOTEL) {
+        players[joueur][ATTENTE]=2;
+      }
+      if (players[joueur][POSITION] == OIES)
+      {
         mouvement_player( joueur, D1, D2);
-        if (players[joueur][POSITION]==HOTEL) {
-          players[joueur][ATTENTE]=2;
-        }
-        if (players[joueur][POSITION] == OIES)
-        {
-          mouvement_player( joueur, D1, D2);
-        }
-        if (players[joueur][POSITION]==LABYRINTHE) {
-          players[joueur][POSITION]=30;
-        }
-        if (players[joueur][POSITION]==TETEDEMORT) {
-          players[joueur][POSITION]=0;
-        }
-      } else {
-        players[joueur][ATTENTE]--;
       }
-      play=false;
+      if (players[joueur][POSITION]==LABYRINTHE) {
+        players[joueur][POSITION]=30;
+      }
+      if (players[joueur][POSITION]==TETEDEMORT) {
+        players[joueur][POSITION]=0;
+      }
+    } else {
+      players[joueur][ATTENTE]--;
+    }
+    play=false;
 
-      if (players[joueur][POSITION]==ARRIVER) {
-        endgame();
-      }
+    if (players[joueur][POSITION]==ARRIVER) {
+      endgame();
     }
   }
+}
 
 void mouvement_player( int joueur, int D1, int D2) {
-  supp_player(players[joueur][POSITION]);
+  display_case(players[joueur][POSITION]);
   players[joueur][POSITION] = players[joueur][POSITION] + D1 + D2;
   if (players[joueur][POSITION] > 63) {
     int ecart = players[joueur][POSITION] - 63;
     players[joueur][POSITION] = players[joueur][POSITION] - ecart * 2;
   }
-  display_player(players[joueur][POSITION],joueur);
+  display_player(players[joueur][POSITION], joueur);
 }
 
 
-void supp_player(int celulle) {
-  fill (143, 139, 163);
-  rect (plateau[celulle][0], plateau_y, taillecase, taillecase);
+////void supp_player(int celulle) {
+//  fill (143, 139, 163);
+//  ellipse (plateau[celulle][0], plateau_y, taillecase/2, taillecase/2);
+//  fill(0);
+//  text(celulle, plateau[celulle][0], plateau_y);
+//}
+
+void display_player(int celulle, int joueur) {
+  fill (players_colors*(joueur+1), 99, 99);
+  ellipse (plateau[celulle][0], plateau_y, taillecase/2, taillecase/2);
   fill(0);
   text(celulle, plateau[celulle][0], plateau_y);
 }
-
-void display_player(int celulle,int joueur) {
-    if (joueur==0){
-  fill (#73D0FC);
+void display_case(int i) {
+  fill (#EDEDE8);
+  switch(i) {
+  case HOTEL:
+    fill(#E71CE8);
+    break;
+  case LABYRINTHE:
+    fill(#865E08);
+    break;
+  case TETEDEMORT:
+    fill(#5A5753);
+    break;
+  case 9:
+  case 18:
+  case 27:
+  case 36:
+  case 45:
+    fill(#F5EE11);
+    break;
+  case 0:
+    fill(#2DFF00);
+    break;
+  case 63:
+    fill(#21860B);
+    break;
   }
-    if (joueur==1){
-  fill (#FF924D);
-  }
-  rect (plateau[celulle][0], plateau_y, taillecase, taillecase);
+  rect (plateau[i][0], plateau_y, taillecase, taillecase);
+  textAlign(CENTER, CENTER);
   fill(0);
-  text(celulle, plateau[celulle][0], plateau_y);
-
+  text(i, plateau[i][0], plateau_y);
 }
 void display_plateau() {
   for (int i = 0; i < 64; i++) {
-
-    fill (#EDEDE8);
-    switch(i) {
-    case HOTEL:
-      fill(#E71CE8);
-      break;
-    case LABYRINTHE:
-      fill(#865E08);
-      break;
-    case TETEDEMORT:
-      fill(#5A5753);
-      break;
-    case 9:
-    case 18:
-    case 27:
-    case 36:
-    case 45:
-      fill(#F5EE11);
-      break;
-    case 0:
-      fill(#2DFF00);
-      break;
-    case 63:
-      fill(#21860B);
-      break;
-    }
-    rect (plateau[i][0], plateau_y, taillecase, taillecase);
-    textAlign(CENTER, CENTER);
-    fill(0);
-    text(i, plateau[i][0], plateau_y);
+    display_case(i);
   }
 }
 
 void setup() {
-
+  colorMode(HSB, 360, 100, 100);
   rectMode(CENTER);
   init_plateau();
   display_plateau();
@@ -183,8 +179,8 @@ void endgame() {
 void mouseClicked() {
   play = true;
   joueur++;
-  if (joueur==nb_players){
-  joueur=0;
+  if (joueur==nb_players) {
+    joueur=0;
   }
   println("joue un coup");
 }
