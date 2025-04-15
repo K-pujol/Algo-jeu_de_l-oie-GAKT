@@ -1,13 +1,13 @@
 int D1 = 0;
 int D2 = 0;
-int joueur_actif=-1;
-int nb_players=20;
+int joueur_actif=0;
+int nb_players=4;
 int players_colors= int(360/(nb_players+1));
 int[][] plateau = new int [64][2];
 int[][] players = new int [nb_players][2];
-int taillecase= 40;
+int taillecase= 20;
 int plateau_y=taillecase/2;
-boolean play=true;
+boolean play=false;
 int attente=0;
 final int HOTEL=19;
 final int LABYRINTHE=42;
@@ -27,10 +27,6 @@ void settings() {
  
 }
 void draw() {
-  joueur_actif++;
-  if (joueur_actif==nb_players) {
-    joueur_actif=0;
-  }
   if (play) {
 
 
@@ -74,7 +70,7 @@ void draw() {
       println("Joueur ", joueur_actif, " sur case ", players[joueur_actif][POSITION], " attend encore ", players[joueur_actif][ATTENTE], "tour(s)");
       players[joueur_actif][ATTENTE]--;
     }
-    //play=false;
+    play=false;
   }
   if (players[joueur_actif][POSITION]==ARRIVEE)
   {
