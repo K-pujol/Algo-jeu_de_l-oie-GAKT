@@ -1,0 +1,69 @@
+int D1 = 0;
+int D2 = 0;
+int position = 0;
+int[] plateau = new int [64];
+int taillecase= 10;
+int plateau_y=taillecase/2;
+
+void draw() {
+    
+}
+void supp_player(int position){
+      fill (143, 139, 163);
+      rect (plateau[position], plateau_y, taillecase, taillecase);
+      fill(0);
+      text(position, plateau[position], plateau_y);
+      
+} 
+
+void display_player(int position){
+      fill (255, 0, 0);
+      rect (plateau[position], plateau_y, taillecase, taillecase);
+      fill(0);
+      text(position, plateau[position], plateau_y);
+      
+}
+void display_plateau() {
+  for (int i = 0; i < 64; i++) {
+
+    fill (143, 139, 163);
+    rect (plateau[i], plateau_y, taillecase, taillecase);
+    textAlign(CENTER, CENTER);
+    fill(0);
+    text(i, plateau[i], plateau_y);
+  }
+}
+void setup() {
+  size (1000, 500);
+  rectMode(CENTER);
+  init_plateau();
+  display_plateau();
+  while (position != 63) {
+
+    D1 = LancerDes();
+    D2 = LancerDes();
+    delay(1000);
+    println("position: " + position + " " + D1 + "+" +  D2);
+    supp_player(position);
+    position = position + D1 + D2;
+    if (position > 63) {
+      int ecart = position - 63;
+      position = position - ecart * 2;      
+    }
+     display_player(position);
+  }
+
+  println("Position: " + position + " C'est gagné !");
+}
+
+void init_plateau() {
+  for (int i=0; plateau.length>i; i++) {
+    plateau[i]=i*taillecase+taillecase/2;
+  }
+}
+
+
+int LancerDes() {
+
+  return int(random(6)+1);
+}
