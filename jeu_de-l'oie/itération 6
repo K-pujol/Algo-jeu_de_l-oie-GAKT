@@ -1,0 +1,190 @@
+int D1 = 0;
+int D2 = 0;
+int joueur=0;
+int nb_players=2;
+int[][] plateau = new int [64][2];
+int[][] players = new int [nb_players][2];
+int taillecase= 40;
+int plateau_y=taillecase/2;
+boolean play=false;
+int attente=0;
+final int HOTEL=19;
+final int LABYRINTHE=42;
+final int TETEDEMORT=58;
+final int OIES=9;
+final int PRISON=52;
+final int DEPART=0;
+final int ARRIVER=63;
+final int PUITS=3;
+final int POSITION=0;
+final int ATTENTE=1;
+
+void settings() {
+  size (taillecase*64, taillecase*10);
+  
+}
+void draw() {
+  if (play) {
+      if (players[joueur][ATTENTE]==0) {
+        D1 = LancerDes();
+        D2 = LancerDes();
+        println(D1,"+",D2);
+        mouvement_player( joueur, D1, D2);
+        if (players[joueur][POSITION]==HOTEL) {
+          players[joueur][ATTENTE]=2;
+        }
+        if (players[joueur][POSITION] == OIES)
+        {
+          mouvement_player( joueur, D1, D2);
+        }
+        if (players[joueur][POSITION]==LABYRINTHE) {
+          players[joueur][POSITION]=30;
+        }
+        if (players[joueur][POSITION]==TETEDEMORT) {
+          players[joueur][POSITION]=0;
+        }
+      } else {
+        players[joueur][ATTENTE]--;
+      }
+      play=false;
+
+      if (players[joueur][POSITION]==ARRIVER) {
+        endgame();
+      }
+    }
+  }
+
+void mouvement_player( int joueur, int D1, int D2) {
+  supp_player(players[joueur][POSITION]);
+  players[joueur][POSITION] = players[joueur][POSITION] + D1 + D2;
+  if (players[joueur][POSITION] > 63) {
+    int ecart = players[joueur][POSITION] - 63;
+    players[joueur][POSITION] = players[joueur][POSITION] - ecart * 2;
+  }
+  display_player(players[joueur][POSITION],joueur);
+}
+
+
+void supp_player(int celulle) {
+  fill (143, 139, 163);
+  rect (plateau[celulle][0], plateau_y, taillecase, taillecase);
+  fill(0);
+  text(celulle, plateau[celulle][0], plateau_y);
+}
+
+void display_player(int celulle,int joueur) {
+    if (joueur==0){
+  fill (#73D0FC);
+  }
+    if (joueur==1){
+  fill (#FF924D);
+  }
+  rect (plateau[celulle][0], plateau_y, taillecase, taillecase);
+  fill(0);
+  text(celulle, plateau[celulle][0], plateau_y);
+
+}
+void display_plateau() {
+  for (int i = 0; i < 64; i++) {
+
+    fill (#EDEDE8);
+    switch(i) {
+    case HOTEL:
+      fill(#E71CE8);
+      break;
+    case LABYRINTHE:
+      fill(#865E08);
+      break;
+    case TETEDEMORT:
+      fill(#5A5753);
+      break;
+    case 9:
+    case 18:
+    case 27:
+    case 36:
+    case 45:
+      fill(#F5EE11);
+      break;
+    case 0:
+      fill(#2DFF00);
+      break;
+    case 63:
+      fill(#21860B);
+      break;
+    }
+    rect (plateau[i][0], plateau_y, taillecase, taillecase);
+    textAlign(CENTER, CENTER);
+    fill(0);
+    text(i, plateau[i][0], plateau_y);
+  }
+}
+
+void setup() {
+
+  rectMode(CENTER);
+  init_plateau();
+  display_plateau();
+}
+
+void init_players() {
+  for (int i=0; i<players.length; i++) {
+    players[i][POSITION]=0;
+    players[i][ATTENTE]=0;
+  }
+}
+
+void init_plateau() {
+  for (int i=0; plateau.length>i; i++) {
+    plateau[i][0]=i*taillecase+taillecase/2;
+    switch(i) {
+    case DEPART:
+      plateau[i][1]=DEPART;
+      break;
+    case PUITS:
+      plateau[i][1]=PUITS;
+      break;
+    case OIES:
+    case 18:
+    case 27:
+    case 36:
+    case 45:
+      plateau[i][1]=OIES;
+      break;
+    case HOTEL:
+      plateau[i][1]=HOTEL;
+      break;
+    case LABYRINTHE:
+      plateau[i][1]=LABYRINTHE;
+      break;
+    case PRISON:
+      plateau[i][1]=PRISON;
+      break;
+    case TETEDEMORT:
+      plateau[i][1]=TETEDEMORT;
+      break;
+    case ARRIVER:
+      plateau[i][1]=ARRIVER;
+      break;
+    }
+  }
+}
+
+
+int LancerDes() {
+
+  return int(random(6)+1);
+}
+
+void endgame() {
+  println("c'est gagné");
+  noLoop();
+}
+
+void mouseClicked() {
+  play = true;
+  joueur++;
+  if (joueur==nb_players){
+  joueur=0;
+  }
+  println("joue un coup");
+}
