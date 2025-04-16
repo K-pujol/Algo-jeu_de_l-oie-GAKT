@@ -2,7 +2,7 @@ int D1 = 0;
 int D2 = 0;
 int lancerJ1 = 0;
 int lancerJ2 = 0;
-int nb_players=10;
+int nb_players=8;
 int joueur_actif=nb_players-1;
 int players_colors= int(360/(nb_players+1));
 int[][] plateau = new int [64][2];
@@ -21,7 +21,7 @@ final int ARRIVEE=63;
 final int PUITS=3;
 final int POSITION=0;
 final int ATTENTE=1;
-final int STAR=3;
+final int STARS=2;
 final color BG = color (240, 224, 211);
 
 
@@ -45,6 +45,7 @@ void draw() {
       {
         println("Joueur ", joueur_actif, " tombe sur une oie. Il avance à nouveau." );
         mouvement_player(D1, D2);
+        players[joueur_actif][STARS]= +1;
       }
       if (players[joueur_actif][POSITION]==LABYRINTHE) {
         int found_player = check_case(30);
@@ -58,6 +59,7 @@ void draw() {
       }
       if (players[joueur_actif][POSITION]==TETEDEMORT) {
         players[joueur_actif][POSITION]=0;
+        players[joueur_actif][STARS]= -2;
         println("Joueur ", joueur_actif, " est mort. Il recommence la partie." );
       }
       if (players[joueur_actif][POSITION]==PUITS) {
@@ -66,6 +68,7 @@ void draw() {
       }
       if (players[joueur_actif][POSITION]==PRISON) {
         if (check_case(players[joueur_actif][POSITION]) == -1) {
+          players[joueur_actif][STARS]= -1;
           players[joueur_actif][ATTENTE]=-1;
           println("Joueur ", joueur_actif, " est en prison. Il attend qu'on vienne le libérer" );
         }
@@ -79,7 +82,9 @@ void draw() {
   }
   if (players[joueur_actif][POSITION]==ARRIVEE)
   {
+    players[joueur_actif][STARS]= +3;
     endgame();
+    println(joueur_actif,players[joueur_actif][STARS]);
   }
 }
 
@@ -135,6 +140,7 @@ void mouvement_player( int D1, int D2) {
       players[player_found][ATTENTE]=0;
       display_player(player_found);
       players[joueur_actif][POSITION]=future_case;
+      players[joueur_actif][STARS]= +1;
       println("Joueur ", joueur_actif, " à eu un meilleur lancé que joueur", player_found, "qui retourne en case ", players[player_found][POSITION]);
     } else {
       players[joueur_actif][POSITION]=players[joueur_actif][POSITION];
@@ -142,7 +148,6 @@ void mouvement_player( int D1, int D2) {
     }
   } else {
     players[joueur_actif][POSITION]=future_case;
-    println("avance");
   }
 }
 
@@ -266,7 +271,11 @@ int LancerDes() {
 }
 
 void endgame() {
-  println("c'est gagné pour le joueur ");
+  for (int i=0; i<players.length; i++) {
+    if (players[i][STARS]>players[i][STARS]) {
+      players[i][STARS]=players[i][STARS];
+    }
+    }    
   noLoop();
 }
 
