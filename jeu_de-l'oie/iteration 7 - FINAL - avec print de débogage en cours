@@ -1,7 +1,7 @@
 int D1 = 0;
 int D2 = 0;
 int joueur_actif=0;
-int nb_players=4;
+int nb_players=10;
 int players_colors= int(360/(nb_players+1));
 int[][] plateau = new int [64][2];
 int[][] players = new int [nb_players][2];
@@ -23,7 +23,7 @@ final color BG = color (240, 224, 211);
 
 
 void settings() {
-  size (taillecase*64, int(taillecase*(nb_players+1)));
+  size (taillecase*64, int(taillecase*(nb_players)));
 }
 void draw() {
   if (play) {
@@ -42,7 +42,7 @@ void draw() {
         players[joueur_actif][ATTENTE]=2;
         println("Joueur ", joueur_actif, " est à l'hôtel. Il passe les deux prochains tours");
       }
-      if (players[joueur_actif][POSITION] == OIES)
+      if (plateau[players[joueur_actif][POSITION]][1] == OIES )
       {
         println("Joueur ", joueur_actif, " tombe sur une oie. Il avance à nouveau." );
         mouvement_player(D1, D2);
